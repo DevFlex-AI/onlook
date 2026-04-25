@@ -238,6 +238,10 @@ export const projectRouter = createTRPCRouter({
             userId: z.string(),
             sandboxId: z.string(),
             sandboxUrl: z.string(),
+            git: z.object({
+                repoUrl: z.string().url(),
+                baseBranch: z.string().min(1),
+            }).optional(),
             creationData: projectCreateRequestInsertSchema
                 .omit({
                     projectId: true,
@@ -256,6 +260,10 @@ export const projectRouter = createTRPCRouter({
                 const newBranch = createDefaultBranch({
                     projectId: newProject.id,
                     sandboxId: input.sandboxId,
+                    overrides: {
+                        gitBranch: input.git?.baseBranch ?? null,
+                        gitRepoUrl: input.git?.repoUrl ?? null,
+                    },
                 });
                 await tx.insert(branches).values(newBranch);
 
