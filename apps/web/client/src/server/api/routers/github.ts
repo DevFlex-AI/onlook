@@ -72,6 +72,13 @@ const getFileContentAsBase64 = async (provider: Provider, sandboxPath: string): 
         return Buffer.from(file.file.toString(), 'utf-8').toString('base64');
     }
 
+    if (!file.file.content) {
+        throw new TRPCError({
+            code: 'INTERNAL_SERVER_ERROR',
+            message: `Unable to read binary content for ${sandboxPath}`,
+        });
+    }
+
     return Buffer.from(file.file.content).toString('base64');
 };
 
